@@ -28,6 +28,34 @@ arrayNotSorted: .word marianna, markos, maria
 str_ge:
 #---------
 # Write the subroutine code here
+    .global str_ge
+str_ge:
+    loop:
+        lb t0, 0(a0)      
+        lb t1, 0(a1)     
+        beqz t0, done
+        beqz t1, less_than
+        bne t0, t1, check_order
+
+
+        addi a0, a0, 1
+        addi a1, a1, 1
+        j loop
+
+    check_order:
+        blt t0, t1, less_than
+        li a0, 1           
+        ret
+
+    less_than:
+        li a0, 0           
+        ret
+
+    done:
+       
+        li a0, 0
+        ret
+
 #  You may move jr ra   if you wish.
 #---------
             jr   ra
@@ -44,6 +72,37 @@ str_ge:
 recCheck:
 #---------
 # Write the subroutine code here
+    .global recCheck
+recCheck:
+
+    beqz a1, sorted
+    li t0, 1
+    beq a1, t0, sorted
+    lw t1, 0(a0)       
+    lw t2, 4(a0)     
+
+   
+    mv a0, t1
+    mv a1, t2
+    call str_ge       
+    
+    beqz a0, not_sorted  
+
+   
+    addi a0, a0, 4      
+    addi a1, a1, -1     
+    call recCheck
+
+    ret
+
+not_sorted:
+    li a0, 0           
+    ret
+
+sorted:
+    li a0, 1           
+    ret
+
 #  You may move jr ra   if you wish.
 #---------
             jr   ra
